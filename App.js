@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -15,8 +15,33 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import ListaContatos from './components/ListaContatos';
+import PermissionsHelper from './helpers/PermissionsHelper';
+import Contacts from 'react-native-contacts';
 
 const App = () => {
+  const [contatos, setContatos] = useState([]);
+
+  useEffect(() => {
+    PermissionsHelper.PedirPermicaoContatos(carregarContatos);
+  }, [carregarContatos]);
+
+  const carregarContatos = () => {
+    Contacts.getAll((err, contacts) => {
+      if (err === 'denied') {
+        console.warn('Permission to access contacts was denied');
+      } else {
+        const contatosAux = contacts.map((contato) => {
+          return {
+            nome: contato.givenName,
+            numero: contato.phoneNumbers
+              .map((phoneNumbers) => phoneNumbers.number)
+              .join(', '),
+          };
+        });
+        setContatos(contatosAux);
+      }
+    });
+  };
   return (
     <>
       <View style={styles.container}>
@@ -27,7 +52,7 @@ const App = () => {
             <Text style={styles.buttonText}>Pesquisar</Text>
           </TouchableOpacity>
         </View>
-        <ListaContatos />
+        <ListaContatos contatos={contatos} />
       </View>
     </>
   );
