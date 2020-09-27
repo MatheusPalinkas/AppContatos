@@ -19,16 +19,17 @@ import PermissionsHelper from './helpers/PermissionsHelper';
 import Contacts from 'react-native-contacts';
 
 const App = () => {
+  const [filtro, setFiltro] = useState('');
   const [contatos, setContatos] = useState([]);
 
   useEffect(() => {
     PermissionsHelper.PedirPermicaoContatos(carregarContatos);
   }, [carregarContatos]);
 
-  const carregarContatos = () => {
+  const carregarContatos = (filterName = '') => {
     Contacts.getAll((err, contacts) => {
       if (err === 'denied') {
-        console.warn('Permission to access contacts was denied');
+        console.warn('Acesso aos contatos negado');
       } else {
         const contatosAux = contacts.map((contato) => {
           return {
@@ -38,17 +39,35 @@ const App = () => {
               .join(', '),
           };
         });
-        setContatos(contatosAux);
+        if (!filterName) setContatos(contatosAux);
+        else {
+          console.log(contatosAux[0].nome);
+          setContatos(
+            contatosAux.filter((contato) =>
+              contato.nome.toLowerCase().includes(filterName.toLowerCase()),
+            ),
+          );
+        }
       }
     });
   };
+
+  const filtrar = (e) => {
+    e.preventDefault();
+    carregarContatos(filtro);
+  };
+
   return (
     <>
       <View style={styles.container}>
         <View style={styles.campoPesquisa}>
           <Text style={styles.label}>Pesquisar contato</Text>
-          <TextInput style={styles.input}></TextInput>
-          <TouchableOpacity style={styles.button}>
+          <TextInput
+            style={styles.input}
+            onChangeText={(text) => setFiltro(text)}
+            value={filtro}
+          />
+          <TouchableOpacity style={styles.button} onPress={filtrar}>
             <Text style={styles.buttonText}>Pesquisar</Text>
           </TouchableOpacity>
         </View>

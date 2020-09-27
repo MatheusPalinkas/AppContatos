@@ -5,7 +5,7 @@ const Contato = ({contato}) => {
   return (
     <View style={styles.contato}>
       <Text style={styles.labelNome}>{contato.nome}</Text>
-      <Text style={styles.labelNumero}>{contato.numero}</Text>
+      <Text style={styles.labelNumero}>Numeros: {contato.numero}</Text>
     </View>
   );
 };
@@ -21,7 +21,8 @@ const styles = StyleSheet.create({
   },
   labelNome: {
     color: '#333',
-    fontSize: 16,
+    fontSize: 20,
+    marginBottom: 10,
   },
   labelNumero: {},
 });

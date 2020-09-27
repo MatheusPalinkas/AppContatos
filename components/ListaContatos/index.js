@@ -20,6 +20,8 @@ const styles = StyleSheet.create({
   listasContatos: {
     paddingHorizontal: 20,
     paddingTop: 20,
+    flex: 1,
+    marginBottom: 10,
   },
   labelTotal: {
     color: '#333',
